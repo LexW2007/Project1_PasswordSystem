@@ -73,3 +73,43 @@ p {
     text-align: center;
     margin-top: 15px;
 }
+
+.error-message {
+    padding: 12px;
+    background-color:rgb(245, 191, 212);
+    border-radius: 5px;
+    font-size: 15px;
+    color:red;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 50px;
+    color: red;
+}
+
+span {
+    color: red;
+}
+
+.box p{
+    font-size: 15px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.box button {
+    width: 25%;
+    padding: 10px;
+    font-size: 13px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    background: white;
+    color: black;
+    cursor: pointer;
+}
