@@ -2,3 +2,7 @@
 
 ## Author: Lex Watts
 
+### Software Used
+
+VSCode - IDE
+XAMPP - Apache and MySQL manager
