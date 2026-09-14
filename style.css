@@ -94,7 +94,7 @@ p {
 
 h1 {
     font-size: 50px;
-    color: red;
+    color: black;
 }
 
 span {
@@ -116,6 +116,7 @@ span {
     color: white;
     text-align: center;
     margin-top: 15px;
+    margin-bottom: 10px;
 }
 
 .box button {
