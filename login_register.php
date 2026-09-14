@@ -2,31 +2,59 @@
 
 session_start();
 require_once 'config.php';
+require_once 'functions.php';
 
-if(isset($_POST['register'])) {
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+if (isset($_POST['register'])) {
+    $username = trim($_POST['username']);
+    $rawPassword = $_POST['password'];
+    $securityQuestion = $_POST['security_question'] ?? '';
+    $securityAnswer = strtolower(trim($_POST['security_answer'] ?? ''));
 
-    $checkUsername = $conn->query("SELECT username FROM users WHERE username = '$username'");
-    if($checkUsername->num_rows > 0) {
-        $_SESSION['register_error'] = "Username already exists. Please choose a different username.";
+    $passwordError = validatePassword($rawPassword);
+
+    if ($passwordError) {
+        $_SESSION['register_error'] = $passwordError;
+        $_SESSION['active_form'] = 'register';
+    } elseif ($securityQuestion === '' || $securityAnswer === '') {
+        $_SESSION['register_error'] = "Please choose a security question and provide an answer.";
         $_SESSION['active_form'] = 'register';
     } else {
-        $conn->query("INSERT INTO users (username, password) VALUES ('$username', '$password')");
+        $checkStmt = $conn->prepare("SELECT username FROM allusers WHERE username = ?");
+        $checkStmt->bind_param("s", $username);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
+
+        if ($checkResult->num_rows > 0) {
+            $_SESSION['register_error'] = "Username already exists. Please choose a different username.";
+            $_SESSION['active_form'] = 'register';
+        } else {
+            $hashedPassword = password_hash($rawPassword, PASSWORD_DEFAULT);
+            $hashedAnswer = password_hash($securityAnswer, PASSWORD_DEFAULT);
+
+            $insertStmt = $conn->prepare(
+                "INSERT INTO allusers (username, password, security_question, security_answer) VALUES (?, ?, ?, ?)"
+            );
+            $insertStmt->bind_param("ssss", $username, $hashedPassword, $securityQuestion, $hashedAnswer);
+            $insertStmt->execute();
+        }
     }
 
     header("Location: index.php");
     exit();
 }
 
-if(isset($_POST['login'])) {
-    $username = $_POST['username'];
+if (isset($_POST['login'])) {
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $result = $conn->query("SELECT * FROM users WHERE username = '$username'");
-    if($result->num_rows > 0) {
+    $stmt = $conn->prepare("SELECT * FROM allusers WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        if(password_verify($password, $user['password'])) {
+        if (password_verify($password, $user['password'])) {
             $_SESSION['username'] = $username;
             header("Location: user_page.php");
             exit();

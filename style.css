@@ -24,7 +24,7 @@ body {
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    background: darkred;
+    background: red;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(255, 0, 0, 100);
     display: none;
@@ -102,7 +102,7 @@ span {
 }
 
 .box {
-    background: darkred;
+    background: red;
     color: white;
     padding: 20px;
     border-radius: 10px;
